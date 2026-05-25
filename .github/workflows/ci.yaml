@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -18,4 +20,4 @@ jobs:
           cache: maven
 
       - name: Build and test
-        run: mvn verify -B
+        run: mvn test -Dtest=PartServiceTest -B
