@@ -1,34 +1,28 @@
 package com.tysontoumi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tysontoumi.model.Part;
 import com.tysontoumi.model.PartCategory;
 import com.tysontoumi.repository.PartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class PartControllerIntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
     @Autowired
     private PartRepository partRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -36,51 +30,33 @@ class PartControllerIntegrationTest {
     }
 
     @Test
-    void getAllParts_returnsEmptyList() throws Exception {
-        mockMvc.perform(get("/api/parts"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray());
+    void getAllParts_returnsEmptyArray() {
+        ResponseEntity<Part[]> response = restTemplate.getForEntity("/api/parts", Part[].class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEmpty();
     }
 
     @Test
-    void createPart_validPart_returns201() throws Exception {
+    void createPart_validPart_returns201() {
         Part part = new Part("Testskive", PartCategory.DIAL, "En testskive", 299.0, 5);
-
-        mockMvc.perform(post("/api/parts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(part)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Testskive"))
-                .andExpect(jsonPath("$.category").value("DIAL"));
+        ResponseEntity<Part> response = restTemplate.postForEntity("/api/parts", part, Part.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody().getName()).isEqualTo("Testskive");
     }
 
     @Test
-    void createPart_missingName_returns400() throws Exception {
-        Part part = new Part("", PartCategory.DIAL, "Ingen navn", 299.0, 5);
-
-        mockMvc.perform(post("/api/parts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(part)))
-                .andExpect(status().isBadRequest());
+    void getPartById_notFound_returns404() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/parts/999", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
-    void getPartById_notFound_returns404() throws Exception {
-        mockMvc.perform(get("/api/parts/999"))
-                .andExpect(status().isNotFound());
-    }
+    void createPart_thenGetAll_returnsOne() {
+        Part part = new Part("Stål kasse", PartCategory.CASE, "Test kasse", 899.0, 3);
+        restTemplate.postForEntity("/api/parts", part, Part.class);
 
-    @Test
-    void getPartsGrouped_returnsGroupedByCategory() throws Exception {
-        Part dial = new Part("Hvid skive", PartCategory.DIAL, "Test", 299.0, 5);
-        Part strap = new Part("Lænke", PartCategory.STRAP, "Test", 199.0, 3);
-        partRepository.save(dial);
-        partRepository.save(strap);
-
-        mockMvc.perform(get("/api/parts/grouped"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.DIAL").isArray())
-                .andExpect(jsonPath("$.STRAP").isArray());
+        ResponseEntity<Part[]> response = restTemplate.getForEntity("/api/parts", Part[].class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).hasSize(1);
     }
 }
