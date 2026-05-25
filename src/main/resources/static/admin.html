@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyson Toumi – Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+    <header class="site-header">
+        <div class="logo">TYSON TOUMI</div>
+        <nav>
+            <a href="index.html">Konfigurér</a>
+            <a href="admin.html" class="active">Admin</a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showTab('orders')">Ordrer</button>
+            <button class="tab-btn" onclick="showTab('parts')">Lagerstyring</button>
+            <button class="tab-btn" onclick="showTab('add-part')">Tilføj del</button>
+        </div>
+
+        <!-- ORDRER -->
+        <section id="tab-orders" class="tab-content active">
+            <div class="section-header">
+                <h2>Ordrer</h2>
+                <div class="filter-group">
+                    <label>Filtrer efter status:</label>
+                    <select id="status-filter" onchange="filterOrders()">
+                        <option value="">Alle</option>
+                        <option value="RECEIVED">Modtaget</option>
+                        <option value="IN_PRODUCTION">I produktion</option>
+                        <option value="READY">Klar</option>
+                        <option value="DELIVERED">Leveret</option>
+                    </select>
+                </div>
+            </div>
+            <div id="orders-list">
+                <div class="loading">Indlæser ordrer…</div>
+            </div>
+        </section>
+
+        <!-- LAGER -->
+        <section id="tab-parts" class="tab-content">
+            <div class="section-header">
+                <h2>Lagerstyring</h2>
+            </div>
+            <div id="parts-admin-list">
+                <div class="loading">Indlæser dele…</div>
+            </div>
+        </section>
+
+        <!-- TILFØJ DEL -->
+        <section id="tab-add-part" class="tab-content">
+            <h2>Tilføj ny del</h2>
+            <form id="add-part-form">
+                <div class="form-group">
+                    <label>Navn *</label>
+                    <input type="text" id="part-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori *</label>
+                    <select id="part-category" required>
+                        <option value="">Vælg kategori</option>
+                        <option value="DIAL">Urskive (DIAL)</option>
+                        <option value="CASE">Urkasse (CASE)</option>
+                        <option value="STRAP">Lænke/rem (STRAP)</option>
+                        <option value="MECHANISM">Urværk (MECHANISM)</option>
+                        <option value="HANDS">Visere (HANDS)</option>
+                        <option value="CROWN">Krone (CROWN)</option>
+                        <option value="GLASS">Glas (GLASS)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Beskrivelse</label>
+                    <textarea id="part-description" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pris (kr.) *</label>
+                        <input type="number" id="part-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Antal på lager *</label>
+                        <input type="number" id="part-stock" min="0" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Gem del</button>
+                <div id="add-part-feedback" class="feedback"></div>
+            </form>
+        </section>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>

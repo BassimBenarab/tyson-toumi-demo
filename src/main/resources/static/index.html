@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tyson Toumi – Byg dit ur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo">TYSON TOUMI</div>
+        <nav>
+            <a href="index.html" class="active">Konfigurér</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Byg dit<br><em>perfekte ur</em></h1>
+            <p class="subtitle">Vælg dine komponenter nedenfor</p>
+        </section>
+
+        <section class="configurator">
+            <div id="parts-container">
+                <div class="loading">Indlæser komponenter…</div>
+            </div>
+        </section>
+
+        <section class="order-summary" id="order-summary" style="display:none;">
+            <h2>Din konfiguration</h2>
+            <div id="selected-parts-list"></div>
+            <div class="total-price">
+                Total: <span id="total-price">0</span> kr.
+            </div>
+
+            <form id="order-form">
+                <h3>Dine oplysninger</h3>
+                <div class="form-group">
+                    <label for="customer-name">Navn *</label>
+                    <input type="text" id="customer-name" placeholder="Dit fulde navn" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-email">Email *</label>
+                    <input type="email" id="customer-email" placeholder="din@email.dk" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Telefon</label>
+                    <input type="tel" id="customer-phone" placeholder="+45 00 00 00 00">
+                </div>
+                <div class="form-group">
+                    <label for="notes">Ønsker / noter</label>
+                    <textarea id="notes" rows="3" placeholder="Eventuelle ønsker til dit ur…"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" id="submit-btn">Bestil mit ur</button>
+            </form>
+        </section>
+
+        <div id="success-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <div class="checkmark">✓</div>
+                <h2>Bestilling modtaget!</h2>
+                <p id="success-message"></p>
+                <button class="btn-primary" onclick="resetConfigurator()">Konfigurér nyt ur</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
