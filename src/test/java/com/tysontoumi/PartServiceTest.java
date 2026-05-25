@@ -73,7 +73,6 @@ class PartServiceTest {
 
     @Test
     void updateStock_negativeValue_throwsException() {
-        when(partRepository.findById(1L)).thenReturn(Optional.of(testPart));
         assertThatThrownBy(() -> partService.updateStock(1L, -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
